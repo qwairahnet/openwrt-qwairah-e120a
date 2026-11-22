@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+START=99
+STOP=10
+
+start() {
+  (
+    sleep 25
+    /usr/bin/qwairah-tg-notify.sh boot
+    /usr/bin/qwairah-tg-watch.sh
+  ) >/dev/null 2>&1 &
+}
+
+stop() {
+  if [ -f /tmp/qwairah_mon/watch.pid ]; then
+    WPID=$(cat /tmp/qwairah_mon/watch.pid 2>/dev/null)
+    [ -n "$WPID" ] && kill "$WPID" 2>/dev/null || true
+    rm -f /tmp/qwairah_mon/watch.pid
+  fi
+  /usr/bin/qwairah-tg-notify.sh shutdown >/dev/null 2>&1
+}
